@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2563eb">
+<title>College Payment Portal</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;min-height:100vh;padding:18px;background:linear-gradient(135deg,#0f172a,#1d4ed8);color:#111827}
+.container{width:100%;max-width:540px;margin:auto;background:#fff;border-radius:24px;padding:22px;box-shadow:0 20px 60px #0005}
+.header{text-align:center;margin-bottom:20px}
+.logo{width:64px;height:64px;margin:auto;border-radius:20px;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;font-size:30px;box-shadow:0 10px 25px #2563eb55}
+h1{margin:12px 0 4px;font-size:26px}.subtitle{color:#6b7280}
+.bank-card{background:#eff6ff;border:1px solid #bfdbfe;border-radius:18px;padding:18px;margin-bottom:22px}
+.bank-card h2{margin:0 0 14px;color:#1d4ed8;font-size:18px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #dbeafe}
+.row:last-child{border:0}.label{color:#64748b;font-size:13px}.value{font-weight:700;word-break:break-all;text-align:right}
+label{display:block;margin:15px 0 6px;font-weight:700;font-size:14px;color:#374151}
+input,select{width:100%;padding:13px;border:1px solid #d1d5db;border-radius:11px;font-size:15px;outline:none;background:#fff}
+input:focus,select:focus{border-color:#2563eb;box-shadow:0 0 0 3px #2563eb18}
+button{width:100%;margin-top:24px;padding:15px;border:0;border-radius:12px;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.65;cursor:not-allowed}
+#status{margin-top:16px;text-align:center;font-weight:700;min-height:22px}.success{color:#16a34a}.error{color:#dc2626}
+.note{font-size:12px;color:#6b7280;text-align:center;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">₹</div>
+    <h1>College Payment</h1>
+    <div class="subtitle">UPI / Bank Payment Details</div>
+  </div>
+
+  <div class="bank-card">
+    <h2>🏦 College Bank Details</h2>
+    <div class="row"><span class="label">Account Number</span><span class="value">090301000070001</span></div>
+    <div class="row"><span class="label">IFSC Code</span><span class="value">IOBA0000903</span></div>
+  </div>
+
+  <form id="paymentForm" novalidate>
+    <label for="name">Name</label>
+    <input id="name" name="name" type="text" placeholder="Enter your name" autocomplete="name" required>
+
+    <label for="mobile">Mobile Number</label>
+    <input id="mobile" name="mobile" type="tel" placeholder="10 digit mobile number" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required>
+
+    <label for="registerNumber">Register Number</label>
+    <input id="registerNumber" name="registerNumber" type="text" placeholder="Enter register number" required>
+
+    <label for="department">Department</label>
+    <select id="department" name="department" required>
+      <option value="">Select Department</option>
+      <option>EEE</option><option>ECE</option><option>CSE</option><option>Mechanical</option><option>Civil</option>
+    </select>
+
+    <label for="year">Year</label>
+    <select id="year" name="year" required>
+      <option value="">Select Year</option>
+      <option>1st Year</option><option>2nd Year</option><option>3rd Year</option>
+    </select>
+
+    <label for="section">Section</label>
+    <input id="section" name="section" type="text" placeholder="Example: A" maxlength="10" required>
+
+    <label for="transactionNumber">Transaction Number</label>
+    <input id="transactionNumber" name="transactionNumber" type="text" placeholder="Enter UPI transaction number" required>
+
+    <label for="amount">Amount</label>
+    <input id="amount" name="amount" type="number" placeholder="Enter amount" min="1" step="0.01" inputmode="decimal" required>
+
+    <label for="academicYear">Academic Year</label>
+    <input id="academicYear" name="academicYear" value="2026-27" required>
+
+    <button id="submitBtn" type="submit">Submit Payment Details</button>
+    <div id="status" aria-live="polite"></div>
+  </form>
+  <div class="note">Please verify your transaction number before submitting.</div>
+</div>
+
+<script>
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxeU7wlh7kUlEDvJBTeA9lTzuzelTJDSUcc4dIG9sfjXL5gUO1yLeAqirdgraGucrTPYQ/exec";
+const form=document.getElementById("paymentForm");
+const btn=document.getElementById("submitBtn");
+const status=document.getElementById("status");
+
+form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  status.textContent=""; status.className="";
+  if(!form.checkValidity()){form.reportValidity();return}
+  btn.disabled=true; btn.textContent="Submitting...";
+  try{
+    const data=new FormData(form);
+    await fetch(SCRIPT_URL,{method:"POST",body:data,mode:"no-cors"});
+    status.textContent="✓ Payment details submitted successfully!";
+    status.className="success";
+    form.reset();
+    document.getElementById("academicYear").value="2026-27";
+  }catch(err){
+    console.error(err);
+    status.textContent="✕ Submission failed. Please try again.";
+    status.className="error";
+  }finally{
+    btn.disabled=false; btn.textContent="Submit Payment Details";
+  }
+});
+</script>
+</body>
+</html>
